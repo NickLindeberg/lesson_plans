@@ -55,33 +55,67 @@ VALUES ('lobster mac n cheese', 1200, 'side'),
 
 ##### Write queries for the following:
 
-1. What's the total revenue for all items?
-1. What's the average revenue for all items?
-1. What's the minimum revenue for all items?
-1. What's the maximum revenue for all items?
-1. What the count for items with a name?
+1. What's the total revenue for all items? 3800 'SELECT sum(revenue) FROM items;'
+1. What's the average revenue for all items? 950 'SELECT avg(revenue) FROM items;'
+1. What's the minimum revenue for all items? 500 'SELECT min(revenue) FROM items;'
+1. What's the maximum revenue for all items? 1200 'SELECT max(revenue) FROM items;'
+1. What the count for items with a name? 4 'SELECT count(name) FROM items;'
 
 Let's create an item that has all NULL values:
 `INSERT into items (name, revenue, course) VALUES (NULL, NULL, NULL);`
 
-Typically you `count` records in a table by counting on the `id` column, like `SELECT COUNT(id) FROM items;`. However, it's not necessary for a table to have an `id` column. What else can you pass to `count` and still get `5` as your result?
+Typically you `count` records in a table by counting on the `id` column, like `SELECT COUNT(id) FROM items;`. However, it's not necessary for a table to have an `id` column. What else can you pass to `count` and still get `5` as your result? 
+
+SELECT count(*) FROM items;  
+^^ counts all of the entries in the table. I tried counting each of the columns but they all gave me four.  
 
 #### Building on Aggregate Functions
 
 Now, combine multiple functions by returning both the minimum and maximum value from the revenue column:
 `SELECT max(revenue), min(revenue) from items;`
+ max  | min 
+------+-----
+ 1200 | 500
 
 How can we get the revenue based on the course?
 
 `SELECT course, sum(revenue) FROM items GROUP BY course;`
+ course | sum  
+--------+------
+        |     
+ main   | 1500
+ salad  | 1100
+ side   | 1200
+^^ sums the two main courses into one line.  
 
 ##### Write queries for the following:
 
 1. Return all `main` courses. Hint: What ActiveRecord method would you use to get this?
-1. Return only the names of the `main` courses.
-1. Return the min and max value for the `main` courses.
-1. What's the total revenue for all `main` courses?
+       SELECT * FROM items where (course = 'main');
+ id |      name      | revenue | course 
+----+----------------+---------+--------
+  2 | veggie lasagna |    1000 | main
+  3 | striped bass   |     500 | main  
+  
+2. Return only the names of the `main` courses.
+       SELECT name FROM items where (course = 'main');
+      name      
+----------------
+ veggie lasagna
+ striped bass
 
+3. Return the min and max value for the `main` courses.
+       SELECT max(revenue), min(revenue) from items where (course = 'main');
+ max  | min 
+------+-----
+ 1000 | 500
+ 
+4. What's the total revenue for all `main` courses?
+       SELECT sum(revenue) from items where (course = 'main');
+ sum  
+------
+ 1500
+ 
 #### INNER JOINS
 
 Now to the fun stuff. If you're a visual learner, you'll probably want to keep [this article](https://blog.codinghorror.com/a-visual-explanation-of-sql-joins/) as you explore the concepts below. We're going to need multiple tables and to ensure we are on the same page, let's drop our table and populate our database with new data to experiment with.
@@ -163,6 +197,8 @@ id |         name         | revenue | season_id | id |  name
 ```
 
 This is useful, but we probably don't need all of the information from both tables.
+
+TODO
 
 * Can you get it to display only the name for the item and the name for the season?
 * Having two columns with the same name is confusing. Can you customize each heading using `AS`?
